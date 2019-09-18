@@ -1,0 +1,89 @@
+﻿@model ShadowSocketChangePort.Models.ShadowSocketConfig
+@{
+    ViewData["Title"] = "SpeakNow";
+}
+<form style="margin:50px" id="form" onsubmit="return submitResult()">
+    <div class="form-group">
+        @Html.Label("Server")
+        @Html.EditorFor(m => m.Server, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("ServerPort")
+        @Html.EditorFor(m => m.ServerPort, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("LocalAddress")
+        @Html.EditorFor(m => m.LocalAddress, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("LocalPort")
+        @Html.EditorFor(m => m.LocalPort, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("Password")
+        @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("TimeOut")
+        @Html.EditorFor(m => m.TimeOut, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        @Html.Label("Menthod")
+        @Html.DropDownListFor(m => m.Menthod, ViewData["MethodList"] as List<SelectListItem>, new { @class = "form-control" })
+    </div>
+    <div class="form-group">
+        @Html.Label("FastOpen")
+        @Html.EditorFor(m => m.FastOpen)
+    </div>
+    <button id="submitBtn" type="submit" class="btn btn-default" data-toggle="popover" data-content="">设置</button>
+</form>
+
+<div class="modal fade" id="tipsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>提示</h3>
+            </div>
+            <div class="modal-body">
+                <p id="tipsMsg"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-info" data-dismiss="modal">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitResult(){
+        var submitBtn = $("#submitBtn").button('loading')
+        submitBtn.button('loading')
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/Home/ChangePort" ,//url
+            data: $('#form').serialize(),
+            success: function (result) {
+                if(result && result.msg){
+                    showTips("ojbk\n"+result.msg);
+                }else{
+                    showTips("ojb not k");
+                }
+            },
+            error : function() {
+                showTips("ojb bu k");
+            },
+            complete: () => {
+                submitBtn.button('reset')
+            }
+        });
+        return false
+    }
+
+    function showTips(msg){
+        if(typeof(msg) && msg.length > 0){
+            $("#tipsMsg").text(msg)
+            $("#tipsModal").modal()
+        }
+    }
+</script>
